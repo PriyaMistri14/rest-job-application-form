@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadidate Detail view</title>
+</head>
+<body>
+{% load rest_framework %}
+<form method="post" action= "{% url 'candidate_detail' pk=candidate.pk %}">
+{% csrf_token %}
+  {% render_form serializer %}
+  <input type="submit" value="SAVE">
+
+
+
+</form>
+
+
+
+
+</body>
+</html>
