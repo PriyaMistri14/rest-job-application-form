@@ -1,62 +1,5 @@
 from rest_framework import serializers
-from .models import User,CandidateMaster, AcademicMaster,ExperienceMaster,LanguageKnownMaster,TechnologyKnownMaster,ReferenceMaster,PreferenceMaster
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model=User
-        fields = ('url', 'email', 'first_name', 'last_name', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-
-
-        def create(self,validated_data):
-            password = validated_data.pop('password')
-            user= User(**validated_data)
-            user.set_password(password)
-            user.save()
-            return user
-
-
-        def update(self,instance, validated_data):
-            instance.email = validated_data.get("email", instance.email)
-            instance.save()
-            return instance
-
-class AcademicSerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = AcademicMaster
-        fields= '__all__'
-
-class ExperienceSerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = ExperienceMaster
-        fields= '__all__'
-
-class LanguageSerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = LanguageKnownMaster
-        fields= '__all__'
-
-
-
-class TechnologySerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = TechnologyKnownMaster
-        fields= '__all__'
-
-
-
-
-class ReferenceSerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = ReferenceMaster
-        fields= '__all__'
-
-
-
-class PreferenceSerialiazer(serializers.ModelSerializer):
-    class Meta:
-        model = PreferenceMaster
-        fields= '__all__'
+from .models import CandidateMaster, AcademicMaster,ExperienceMaster,LanguageKnownMaster,TechnologyKnownMaster,ReferenceMaster,PreferenceMaster
 
 
 class CandidateSerializer(serializers.ModelSerializer):
@@ -64,7 +7,68 @@ class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CandidateMaster
         fields = '__all__'
-        def create(self, validated_data):
-            candidate = CandidateMaster.objects.create(**validated_data)
-            candidate.save()
-            return candidate
+
+
+
+class AcademicSerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer( read_only=True)
+    class Meta:
+        model = AcademicMaster
+        fields= '__all__'
+
+
+class ExperienceSerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer(read_only=True)    # it is user to display experince with candidate data as well
+    class Meta:
+        model = ExperienceMaster
+        fields= '__all__'
+        # depth=1      # it is also for the same purpose
+
+class LanguageSerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer(read_only=True)
+    class Meta:
+        model = LanguageKnownMaster
+        fields= '__all__'
+
+
+
+class TechnologySerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer(read_only=True)
+    class Meta:
+        model = TechnologyKnownMaster
+        fields= '__all__'
+        # depth=1
+
+
+
+
+class ReferenceSerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer(read_only=True)
+    class Meta:
+        model = ReferenceMaster
+        fields= '__all__'
+        # depth=1
+
+
+
+class PreferenceSerialiazer(serializers.ModelSerializer):
+    # candidate = CandidateSerializer(read_only=True)
+    class Meta:
+        model = PreferenceMaster
+        fields= '__all__'
+        # depth=1
+
+
+
+
+class CandidateAllSerializer(serializers.ModelSerializer):
+    academics= AcademicSerialiazer(many=True)
+    experiences = ExperienceSerialiazer(many=True)
+    languages = LanguageSerialiazer(many=True)
+    technologies = TechnologySerialiazer(many=True)
+    references = ReferenceSerialiazer(many=True)
+    preferences = PreferenceSerialiazer(many=True)
+
+    class Meta:
+        model = CandidateMaster
+        fields= '__all__'

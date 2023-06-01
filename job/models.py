@@ -1,15 +1,10 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractUser
 
 
 
-class User(AbstractUser):
-    username = models.CharField(blank=True, null=True)
-    email = models.EmailField(_(), unique=True)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username','first_name','last_name']
+
+
 
 def validate_name(value):
     if value.isalpha():
@@ -104,7 +99,7 @@ class CandidateMaster(models.Model):
 
 
 class AcademicMaster(models.Model):
-    candidate= models.ForeignKey('CandidateMaster',on_delete=models.CASCADE)
+    candidate= models.ForeignKey('CandidateMaster',on_delete=models.CASCADE,related_name="academics")
     course_name= models.CharField(choices=COURSE_CHOICES,max_length=30)
     name_of_board_university = models.CharField(max_length=30,validators=[validate_name])
     passing_year=models.IntegerField(validators=[validate_year])
@@ -113,7 +108,7 @@ class AcademicMaster(models.Model):
 
 
 class ExperienceMaster(models.Model):
-    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE)
+    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE,related_name="experiences")
     company_name= models.CharField(max_length=50,validators=[validate_name])
     designation= models.CharField(max_length=50,validators=[validate_name])
     from_date = models.DateField()
@@ -121,7 +116,7 @@ class ExperienceMaster(models.Model):
 
 
 class LanguageKnownMaster(models.Model):
-    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE)
+    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE,related_name="languages")
     language= models.CharField(max_length=30,choices=LANGUAGE_CHOICES,null=True,blank=True)
     read = models.BooleanField(blank=True, null=True)
     write = models.BooleanField(blank=True, null=True)
@@ -130,7 +125,7 @@ class LanguageKnownMaster(models.Model):
 
 
 class TechnologyKnownMaster(models.Model):
-    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE)
+    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE,related_name="technologies")
     technology = models.CharField(max_length=30,choices=TECHNOLOGY_CHOICES,null=True,blank=True)
     ranting = models.IntegerField(validators=[validate_rating],null=True,blank=True)
 
@@ -141,7 +136,7 @@ class TechnologyKnownMaster(models.Model):
 
 
 class ReferenceMaster(models.Model):
-    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE)
+    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE,related_name="references")
     refe_name = models.CharField(max_length=50, validators=[validate_name])
     refe_contact_no = models.CharField(max_length=10, validators=[validate_contact_no])
     refe_relation = models.CharField(max_length=30,validators=[validate_name])
@@ -149,7 +144,7 @@ class ReferenceMaster(models.Model):
 
 
 class PreferenceMaster(models.Model):
-    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE)
+    candidate = models.ForeignKey('CandidateMaster', on_delete=models.CASCADE,related_name="preferences")
     prefer_location = models.CharField(max_length=30, choices=PREFER_LOCATION_CHOICES)
     notice_period = models.IntegerField(validators=[validate_notice_period])
     expected_ctc = models.IntegerField()
